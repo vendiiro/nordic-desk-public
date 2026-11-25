@@ -1,0 +1,7 @@
+# Invented example values. Copy to config/goals.local.toml (git-ignored) and put your own numbers there.
+target_eur = 50000        # optional: a goal value in euros
+target_year = 2031        # needed with target_eur: the goal is checked at this many years from today
+monthly_eur = 300         # new money at each month start, split pro rata to today's weights
+lump_eur = 0              # extra money put in now, split the same way
+max_drawdown = 0.30       # optional: the largest fall from a peak you can sit through
+years = 5                 # how far the range reaches, 1 to 10

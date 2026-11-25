@@ -1,0 +1,10 @@
+.venv/
+data/
+out/
+config/*.local.toml
+*.local.*
+__pycache__/
+.superpowers/
+.pytest_tmp/
+.pytest_cache/
+.claude/settings.local.json

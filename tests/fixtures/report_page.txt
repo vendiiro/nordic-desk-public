@@ -1,0 +1,11 @@
+Osake- ja rahastosalkku
+12345678 15.01.2026
+Microsoft 400,00 USD 350,00 4 1 800,00 +210,50 40,00%
+iShares Blockchain Technology UCITS ETF
+USD (Acc)
+10,00 EUR 12,00 20 200,00 −40,00 4,44%
+Some Unknown Fund EUR 11,00 EUR 10,00 10 110,00 +10,00 2,44%
+Nordnet Suomi Indeksi 340,00 EUR 320,00 6,5 2 210,00 +130,00 49,11%
+Likvidit varat 180,00 4,00%
+Yhteensä 4 500,00 +310,50 100,00%
+Osakkeet ja pörssilistatut arvopaperit Markk.hinta Hank.hinta Määrä Markkina-arvo EUR Toteutum.tulos Osuus

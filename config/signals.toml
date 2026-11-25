@@ -1,0 +1,5 @@
+# Analyst-based buy and sell thresholds (see docs/superpowers/specs/2026-11-18-search-and-signals-design.md)
+# buy below = mean target / (1 + buy_margin); sell above = mean target
+buy_margin = 0.15
+# fewer analysts than this: status "thin coverage"
+thin_coverage = 5

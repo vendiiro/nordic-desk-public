@@ -1,0 +1,35 @@
+[project]
+name = "nordic-desk"
+version = "0.1.0"
+description = "Personal US-stock research desk seen from Helsinki, in euros"
+authors = [
+    { name = "vendiiro" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=2.11.0",
+    "arch>=9.0.0",
+    "numpy>=2.5.5",
+    "pandas>=3.1.1",
+    "pypdf>=7.1.1",
+    "scipy>=1.18.1",
+    "statsmodels>=0.15.0",
+    "trafilatura>=2.3.1",
+    "yfinance>=1.8.0",
+]
+
+[project.scripts]
+nordic-desk = "nordic_desk.build:main"
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--basetemp=.pytest_tmp"

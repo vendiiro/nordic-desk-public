@@ -1,0 +1,18 @@
+# Copy to config/holdings.local.toml (git-ignored) or create it with `nordic-desk import-report <pdf>`.
+# Invented example values.
+as_of = 2026-01-15
+cash_eur = 250.0
+
+[[position]]
+name = "Microsoft"
+ticker = "MSFT"
+quantity = 4
+value_eur = 1800.0
+cost_eur = 1500.0
+
+[[position]]
+name = "Nordnet Suomi Indeksi"
+ticker = "^OMXH25"
+quantity = 3.5
+value_eur = 1200.0
+cost_eur = 1100.0

@@ -1,0 +1,59 @@
+# Nordnet instrument name -> Yahoo series used for its returns.
+# currency: what the Yahoo series is quoted in. tech: counts toward the technology share.
+# note: shown in the views when the series is a stand-in rather than the instrument itself.
+# holdings_from (optional): Yahoo ticker whose fund holdings stand in for this fund in the look-through,
+#   for a fund Yahoo has no holdings for (for example a UCITS fund mapped to its US twin).
+
+["Alphabet A"]
+ticker = "GOOGL"
+currency = "USD"
+tech = false
+note = ""
+
+["Microsoft"]
+ticker = "MSFT"
+currency = "USD"
+tech = true
+note = ""
+
+["NVIDIA"]
+ticker = "NVDA"
+currency = "USD"
+tech = true
+note = ""
+
+["Oracle"]
+ticker = "ORCL"
+currency = "USD"
+tech = true
+note = ""
+
+["iShares S&P 500 Information Technology Sector UCITS ETF USD (Acc)"]
+ticker = "QDVE.DE"
+currency = "EUR"
+tech = true
+note = "same fund, Xetra listing"
+
+["iShares Blockchain Technology UCITS ETF USD (Acc)"]
+ticker = "CBUT.DE"
+currency = "EUR"
+tech = true
+note = "same fund, Xetra listing"
+
+["Amundi Nasdaq-100 II UCITS ETF Acc"]
+ticker = "EQQQ.DE"
+currency = "EUR"
+tech = false
+note = "Invesco Nasdaq-100 as stand-in"
+
+["XBT Provider Ether Tracker Euro - EUR"]
+ticker = "ETH-EUR"
+currency = "EUR"
+tech = false
+note = "ETH in euros as stand-in"
+
+["Nordnet Suomi Indeksi"]
+ticker = "^OMXH25"
+currency = "EUR"
+tech = false
+note = "OMX Helsinki 25 index as stand-in"

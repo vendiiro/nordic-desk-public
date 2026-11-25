@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Huurre impact</title>
+<meta name="description" content="Risk of the real portfolio and what adding or selling one stock would change.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600&family=Atkinson+Hyperlegible+Mono:wght@400;600&display=swap">
+<style>
+/* Hallmark · shape: app screen · genre: modern-minimal · theme: Console (deal 3/3, seed nordic-technical-stock-research-853a·791679f5·2026-11-18·r0), colourway paper, cooled to hoarfrost
+ * nav: top bar · signature: money against risk, two bars per holding · states: full; scenarios switch in place · console: paper
+ * axes: light/grotesk-sans/cool-blue · posture: restrained · contrast: pass · data: Yahoo prices, example holdings (invented) · v2.0.0 */
+/* Hallmark · pre-emit critique: P3 H3 E3 S3 R3 V2 · weakest: V, many figures on one screen; the sentence above each block says what they add up to */
+:root {
+  --space-2xs: 4px; --space-xs: 8px; --space-sm: 12px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px; --space-2xl: 64px;
+  --text-xs: 0.8125rem; --text-sm: 0.875rem; --text-md: 1rem; --text-lg: 1.2rem; --text-xl: 1.44rem; --text-2xl: 1.728rem; --text-3xl: 2.488rem;
+  --dur-micro: 120ms; --dur-short: 220ms; --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --container: 1440px; --gutter: 40px; --gap: 24px;
+
+  color-scheme: light;
+  --color-paper: oklch(98.5% 0.004 240); --color-paper-2: oklch(96.5% 0.006 240); --color-paper-3: oklch(92.5% 0.009 240);
+  --color-ink: oklch(21% 0.012 250); --color-ink-2: oklch(36% 0.012 250); --color-muted: oklch(50% 0.014 250);
+  --color-rule: oklch(90% 0.008 240); --color-rule-2: oklch(80% 0.01 240);
+  --color-accent: oklch(46% 0.13 250); --color-accent-deep: oklch(38% 0.12 250); --color-accent-ink: oklch(98.5% 0.004 240);
+  --color-focus: oklch(55% 0.16 250); --color-sel: oklch(94.5% 0.025 250);
+  --color-own: oklch(52% 0.13 70);
+  --color-up: oklch(50% 0.12 165); --color-down: oklch(52% 0.17 25);
+  --color-line: oklch(30% 0.03 250);
+  --color-s1: oklch(42% 0.14 250); --color-s2: oklch(56% 0.13 70); --color-s3: oklch(55% 0.11 165); --color-s4: oklch(62% 0.13 320);
+  --color-s5: oklch(70% 0.06 250); --color-s6: oklch(82% 0.04 250);
+  --font-display: "Host Grotesk", ui-sans-serif, system-ui, sans-serif; --font-body: var(--font-display);
+  --font-num: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+  --radius-card: 8px; --radius-pill: 6px; --rule-hair: 1px; --tracking-display: -0.02em; --display-weight: 500;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-rule-2) var(--color-paper); }
+body { caret-color: var(--color-accent); }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+::selection { background: color-mix(in oklab, var(--color-accent) 30%, transparent); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+a { color: inherit; text-underline-offset: 0.16em; text-decoration-thickness: 1px; }
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: var(--tracking-display); line-height: 1.1; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+h2 { font-size: var(--text-lg); } h3 { font-size: var(--text-xl); }
+p { margin: 0; }
+[hidden] { display: none !important; }
+button, input { font: inherit; color: inherit; }
+svg { display: block; }
+.container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.up { color: var(--color-up); } .down { color: var(--color-down); } .flat { color: var(--color-muted); }
+.sub, .pl, figcaption, .note { color: var(--color-muted); font-size: var(--text-sm); }
+.missing { color: var(--color-muted); }
+.tk { font-family: var(--font-num); font-weight: 600; }
+
+/* top bar */
+.bar { border-bottom: var(--rule-hair) solid var(--color-rule); background: var(--color-paper-2); }
+.bar .container { display: flex; align-items: center; gap: var(--space-lg); min-height: 60px; flex-wrap: wrap; }
+.mark { font-family: var(--font-display); font-weight: var(--display-weight); font-size: var(--text-lg); text-decoration: none; letter-spacing: var(--tracking-display); }
+.bar nav { display: flex; gap: var(--space-2xs); }
+.bar nav a { padding: var(--space-2xs) var(--space-sm); border-radius: var(--radius-pill); text-decoration: none; color: var(--color-ink-2); min-height: 36px; display: inline-flex; align-items: center; }
+.bar nav a:hover { background: var(--color-paper-3); color: var(--color-ink); }
+.bar nav a[aria-current] { background: var(--color-paper-3); color: var(--color-ink); }
+.clock { margin-inline-start: auto; display: flex; gap: var(--space-lg); font-size: var(--text-sm); color: var(--color-muted); flex-wrap: wrap; }
+.clock b { color: var(--color-ink); font-weight: 500; }
+.search { min-height: 36px; width: 14rem; padding: 0 var(--space-sm); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); background: var(--color-paper); }
+.search::placeholder { color: var(--color-muted); }
+.search:hover { border-color: var(--color-muted); }
+.search:focus-visible { outline-offset: -2px; }
+
+/* tables */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: var(--space-xs) var(--space-sm); text-align: start; border-bottom: var(--rule-hair) solid var(--color-rule); white-space: nowrap; vertical-align: middle; }
+thead th { font-weight: 500; font-size: var(--text-sm); color: var(--color-muted); }
+.r { text-align: end; }
+tbody th { font-weight: 400; }
+.watch tbody tr { transition: background-color var(--dur-micro) var(--ease-out); }
+.watch tbody tr:hover { background: var(--color-paper-2); }
+.watch tbody tr[aria-current] { background: var(--color-sel); }
+.pick { display: inline-flex; flex-direction: column; text-decoration: none; min-height: 44px; justify-content: center; }
+.pick:hover .nm { color: var(--color-ink); text-decoration: underline; }
+.nm { font-size: var(--text-sm); color: var(--color-muted); max-width: 16ch; overflow: hidden; text-overflow: ellipsis; }
+.own { margin-inline-start: 8px; font-size: var(--text-xs); color: var(--color-own); border: var(--rule-hair) solid currentColor; border-radius: var(--radius-pill); padding: 0 var(--space-2xs); vertical-align: top; }
+th:has(.own) { display: flex; align-items: center; }
+
+/* 52-week range */
+.range { position: relative; display: block; width: 88px; height: 14px; }
+.range::before { content: ""; position: absolute; inset: 6px 0 auto; height: 2px; background: var(--color-rule-2); }
+.range-mark { position: absolute; top: 1px; left: calc(var(--pos) * 100% - 1.5px); width: 3px; height: 12px; background: var(--color-ink); }
+
+/* svg */
+.spark path { fill: none; stroke-width: 1.5; stroke: var(--color-muted); }
+.spark.up path { stroke: var(--color-up); } .spark.down path { stroke: var(--color-down); }
+.chart { width: 100%; height: auto; overflow: visible; }
+.chart .grid { stroke: var(--color-rule); stroke-width: 1; }
+.chart .base { stroke: var(--color-rule-2); stroke-width: 1; }
+.chart .ax { fill: var(--color-muted); font-family: var(--font-num); font-size: 11px; }
+.chart .ln { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.chart .main { stroke: var(--color-line); }
+.chart .ref { stroke: var(--color-muted); stroke-width: 1.5; }
+.cmp-line { stroke: transparent; }
+.s1 { --c: var(--color-s1); } .s2 { --c: var(--color-s2); } .s3 { --c: var(--color-s3); } .s4 { --c: var(--color-s4); }
+.s5 { --c: var(--color-s5); } .s6 { --c: var(--color-s6); }
+.cmp-line.s1, .cmp-line.s2, .cmp-line.s3, .cmp-line.s4 { stroke: var(--c); }
+.chart-fig { margin: 0; }
+figcaption { display: flex; gap: var(--space-md); align-items: center; margin-top: var(--space-xs); flex-wrap: wrap; }
+.key { display: inline-block; width: 14px; height: 2px; margin-inline-end: -8px; }
+.key.main { background: var(--color-line); } .key.ref { background: var(--color-muted); }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--c, var(--color-rule-2)); margin-inline-end: 8px; }
+.sw.ref { background: var(--color-muted); }
+
+/* deep dive */
+.dive { display: grid; gap: var(--space-md); }
+.dive-head { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-md); flex-wrap: wrap; }
+.dive-head .tk { font-size: var(--text-md); color: var(--color-muted); font-weight: 400; }
+.quote { display: flex; gap: var(--space-sm); align-items: baseline; }
+.px { font-size: var(--text-2xl); }
+.periods { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-block: var(--rule-hair) solid var(--color-rule); }
+.periods > div { display: grid; padding: var(--space-xs) 0; }
+.periods > div + div { border-inline-start: var(--rule-hair) solid var(--color-rule); padding-inline-start: var(--space-sm); }
+.facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); gap: 0 var(--space-lg); margin: 0; }
+.facts > div { display: flex; justify-content: space-between; gap: var(--space-sm); padding: var(--space-xs) 0; border-bottom: var(--rule-hair) solid var(--color-rule); }
+.facts dt { color: var(--color-muted); font-size: var(--text-sm); }
+.facts dd { margin: 0; text-align: end; }
+.held { padding: var(--space-sm); border: var(--rule-hair) solid var(--color-own); border-radius: var(--radius-card); }
+
+/* compare */
+.chips { border: 0; padding: 0; margin: 0 0 var(--space-md); display: flex; flex-wrap: wrap; gap: var(--space-xs); }
+.chip { display: inline-flex; align-items: center; min-height: 36px; padding: 0 var(--space-sm); border: var(--rule-hair) solid var(--color-rule-2); border-radius: var(--radius-pill); cursor: pointer; font-size: var(--text-sm); transition: border-color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out); }
+.chip:hover { border-color: var(--color-muted); }
+.chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.chip:has(input:checked) { background: var(--color-paper-3); border-color: var(--color-ink-2); }
+.chip:has(input:focus-visible) { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.chip:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
+.chip:active { transform: translateY(1px); }
+.cmp-table td, .cmp-table th { text-align: end; } .cmp-table th:first-child { text-align: start; }
+.ref-row { color: var(--color-muted); }
+
+/* portfolio */
+.stack { display: flex; height: 14px; gap: 2px; margin-block: var(--space-sm); }
+.seg { display: block; background: var(--c); }
+.seg.s1, .seg.s2, .seg.s3, .seg.s4, .seg.s5, .seg.s6 { background: var(--c); }
+.weights { list-style: none; margin: 0; padding: 0; display: grid; }
+.weights li { display: grid; grid-template-columns: auto 1fr auto auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0; border-bottom: var(--rule-hair) solid var(--color-rule); }
+.weights li .num:last-child { min-width: 5.5rem; text-align: end; }
+
+/* states */
+.states { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
+.state { border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); padding: var(--space-md); display: grid; gap: var(--space-sm); align-content: start; min-height: 220px; }
+.skel { height: 14px; border-radius: 3px; background: var(--color-paper-3); animation: pulse 1.6s ease-in-out infinite; }
+.skel.w60 { width: 60%; } .skel.w80 { width: 80%; } .skel.w40 { width: 40%; }
+@keyframes pulse { 50% { opacity: 0.45; } }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 var(--space-md); border-radius: var(--radius-pill); border: var(--rule-hair) solid transparent; background: var(--color-accent); color: var(--color-accent-ink); cursor: pointer; font-weight: 500; justify-self: start; transition: background-color var(--dur-micro) var(--ease-out); }
+.btn:hover { background: var(--color-accent-deep); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn.ghost { background: transparent; color: var(--color-ink); border-color: var(--color-rule-2); }
+.btn.ghost:hover { background: var(--color-paper-3); }
+
+.foot { border-top: var(--rule-hair) solid var(--color-rule); margin-top: var(--space-2xl); padding-block: var(--space-lg); color: var(--color-muted); font-size: var(--text-sm); }
+.foot .container { display: grid; gap: var(--space-2xs); }
+
+@media (max-width: 60rem) {
+  :root { --gutter: 16px; }
+  .states { grid-template-columns: minmax(0, 1fr); }
+  .periods { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .clock { margin-inline-start: 0; }
+  .search { width: 100%; }
+  .watch .nm { display: none; }
+  .watch th:first-child, .watch td:first-child { position: sticky; left: 0; background: var(--color-paper); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
+}
+
+
+.mark { color: var(--color-accent); }
+.strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-lg); align-items: start; padding-block: var(--space-lg); border-bottom: var(--rule-hair) solid var(--color-rule); }
+.fig { display: grid; gap: 2px; align-content: start; }
+.fig .v { font-family: var(--font-num); font-size: var(--text-2xl); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.fig .v.sm { font-size: var(--text-xl); }
+.panel { border: var(--rule-hair) solid var(--color-rule); border-radius: var(--radius-card); background: var(--color-paper); padding: var(--space-md); min-width: 0; }
+.panel.flush { padding: 0; }
+.panel.flush .sec-head { padding: var(--space-md) var(--space-md) var(--space-xs); }
+.sec { padding-top: var(--space-lg); }
+.sec-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-sm); }
+.sec-head .sub { max-width: 80ch; margin-top: var(--space-2xs); }
+.legend { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+.legend span { display: inline-flex; align-items: center; gap: var(--space-xs); }
+.legend i { display: inline-block; width: 14px; height: 8px; }
+.kw, .bar-w { background: var(--color-rule-2); }
+.kr, .bar-r { background: var(--color-accent); }
+.km { background: var(--color-line); height: 2px !important; } .kf { background: var(--color-muted); height: 2px !important; }
+.risk th:first-child, .rank th:first-child { padding-inline-start: var(--space-md); }
+.hn { display: block; }
+.risk .nm { display: block; max-width: none; white-space: normal; }
+.bars { width: 28%; min-width: 180px; }
+.bars span { display: block; height: 8px; inline-size: calc(var(--w) * 100%); }
+.bars span + span { margin-top: var(--space-2xs); }
+.whatif { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap); }
+.controls { display: grid; gap: var(--space-xs); margin-bottom: var(--space-md); }
+.controls .chips { margin: 0; align-items: center; }
+.lg { float: left; width: 9rem; padding-top: var(--space-xs); color: var(--color-muted); font-size: var(--text-sm); }
+.out { border-top: var(--rule-hair) solid var(--color-rule); padding-top: var(--space-md); }
+.scn { display: grid; gap: var(--space-sm); }
+.scn h3 { font-size: var(--text-lg); }
+.say { max-width: 70ch; }
+.scn-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-xl); align-items: start; }
+.facts.one { grid-template-columns: minmax(0, 1fr); }
+.ba th[scope="row"] { color: var(--color-ink-2); }
+.nm2 { color: var(--color-muted); font-size: var(--text-sm); }
+.gloss { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: var(--space-md) var(--space-lg); }
+.g { display: grid; gap: var(--space-2xs); align-content: start; padding-top: var(--space-sm); border-top: var(--rule-hair) solid var(--color-rule); }
+.g dt { font-weight: 600; }
+.g dd { margin: 0; display: grid; gap: var(--space-xs); }
+.fm { font-family: var(--font-num); font-size: var(--text-sm); color: var(--color-ink-2); }
+.ex { font-size: var(--text-sm); color: var(--color-accent); }
+.chart .dep { stroke: var(--color-own); stroke-width: 2; }
+.chip input[type="radio"] { position: absolute; opacity: 0; width: 1px; height: 1px; }
+@media (max-width: 75rem) { .strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } .whatif, .scn-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 40rem) { .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .lg { float: none; width: auto; } }
+
+</style>
+</head>
+<body>
+
+<header class="bar"><div class="container">
+  <a class="mark" href="huurre.html" aria-label="Huurre, desk">Huurre</a>
+  <nav aria-label="Views"><a href="huurre.html">Desk</a><a href="#" aria-current="page">Impact</a></nav>
+  <p class="clock"><span>Prices: US close <b>17 Nov</b>, 23:00 Helsinki</span><span>New York opens <b>16:30</b> Helsinki time</span><span>EUR/USD <b class="num">1.0971</b></span></p>
+</div></header>
+<main>
+<h1 class="visually-hidden">Portfolio impact</h1>
+
+<section class="container strip" aria-label="Real portfolio today">
+  <div class="fig"><span class="pl">Example portfolio</span><span class="v num">€31 000</span><span class="note">invented values, 9 holdings and cash</span></div>
+  <div class="fig"><span class="pl">Volatility, 1 year</span><span class="v sm num">19.1%</span><span class="note">past year, today’s weights</span></div>
+  <div class="fig"><span class="pl">Beta to S&amp;P 500, in euros</span><span class="v sm num">1.02</span><span class="note">moves 1.02× the market</span></div>
+  <div class="fig"><span class="pl">Effective holdings</span><span class="v sm num">6.4</span><span class="note">of 10 by count</span></div>
+  <div class="fig"><span class="pl">Technology share</span><span class="v sm num">58%</span><span class="note">Yahoo sector, IT and blockchain ETFs</span></div>
+</section>
+
+<section class="container sec" aria-labelledby="rk-h">
+  <div class="panel flush">
+    <div class="sec-head"><div><h2 id="rk-h">Where the risk comes from</h2><p class="sub">Nvidia, Oracle, iShares Blockchain ETF and Ether tracker carry more risk than their weight. Amundi Nasdaq-100 ETF and Nordnet Suomi Indeksi carry less. The three largest risk sources make up 63% of the swings.</p></div>
+      <p class="legend sub"><span><i class="kw"></i>share of money</span><span><i class="kr"></i>share of risk</span></p></div>
+    <div class="table-wrap"><table class="risk">
+      <thead><tr><th scope="col">Holding</th><th scope="col">Money and risk</th><th scope="col" class="r">Weight</th><th scope="col" class="r">Risk share</th>
+      <th scope="col" class="r">Risk ÷ weight</th><th scope="col" class="r">Volatility</th><th scope="col" class="r">Correlation</th>
+      <th scope="col" class="r">On bad days</th><th scope="col" class="r">1 year</th></tr></thead>
+      <tbody>
+<tr>
+  <th scope="row"><span class="hn">iShares S&amp;P 500 IT ETF</span><span class="nm">same fund, Xetra listing</span></th>
+  <td class="bars"><span class="bar-w" style="--w:1.0000"></span><span class="bar-r" style="--w:0.9465"></span></td>
+  <td class="num r">25.8%</td>
+  <td class="num r">24.4%</td>
+  <td class="num r flat">0.95×</td>
+  <td class="num r">23%</td>
+  <td class="num r">0.64</td>
+  <td class="num r">0.51</td>
+  <td class="num r up">+14%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">Alphabet A</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.7500"></span><span class="bar-r" style="--w:0.7856"></span></td>
+  <td class="num r">19.4%</td>
+  <td class="num r">20.3%</td>
+  <td class="num r flat">1.05×</td>
+  <td class="num r">33%</td>
+  <td class="num r">0.32</td>
+  <td class="num r">0.41</td>
+  <td class="num r down">−7%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">Nvidia</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.5000"></span><span class="bar-r" style="--w:0.7164"></span></td>
+  <td class="num r">12.9%</td>
+  <td class="num r">18.5%</td>
+  <td class="num r down">1.43×</td>
+  <td class="num r">38%</td>
+  <td class="num r">0.54</td>
+  <td class="num r">0.53</td>
+  <td class="num r down">−7%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">Microsoft</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.5000"></span><span class="bar-r" style="--w:0.5004"></span></td>
+  <td class="num r">12.9%</td>
+  <td class="num r">12.9%</td>
+  <td class="num r flat">1.00×</td>
+  <td class="num r">33%</td>
+  <td class="num r">0.39</td>
+  <td class="num r">0.21</td>
+  <td class="num r up">+9%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">Oracle</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.1875"></span><span class="bar-r" style="--w:0.3999"></span></td>
+  <td class="num r">4.8%</td>
+  <td class="num r">10.3%</td>
+  <td class="num r down">2.13×</td>
+  <td class="num r">60%</td>
+  <td class="num r">0.59</td>
+  <td class="num r">0.37</td>
+  <td class="num r down">−39%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">Amundi Nasdaq-100 ETF</span><span class="nm">Invesco Nasdaq-100 as stand-in</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.3125"></span><span class="bar-r" style="--w:0.2354"></span></td>
+  <td class="num r">8.1%</td>
+  <td class="num r">6.1%</td>
+  <td class="num r up">0.75×</td>
+  <td class="num r">18%</td>
+  <td class="num r">0.77</td>
+  <td class="num r">0.58</td>
+  <td class="num r up">+11%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">Nordnet Suomi Indeksi</span><span class="nm">OMX Helsinki 25 index as stand-in</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.3750"></span><span class="bar-r" style="--w:0.1058"></span></td>
+  <td class="num r">9.7%</td>
+  <td class="num r">2.7%</td>
+  <td class="num r up">0.28×</td>
+  <td class="num r">15%</td>
+  <td class="num r">0.29</td>
+  <td class="num r">0.29</td>
+  <td class="num r up">+14%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">iShares Blockchain ETF</span><span class="nm">same fund, Xetra listing</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.0625"></span><span class="bar-r" style="--w:0.0978"></span></td>
+  <td class="num r">1.6%</td>
+  <td class="num r">2.5%</td>
+  <td class="num r down">1.56×</td>
+  <td class="num r">49%</td>
+  <td class="num r">0.59</td>
+  <td class="num r">0.42</td>
+  <td class="num r down">−32%</td>
+</tr>
+<tr>
+  <th scope="row"><span class="hn">Ether tracker</span><span class="nm">ETH in euros as stand-in</span></th>
+  <td class="bars"><span class="bar-w" style="--w:0.0625"></span><span class="bar-r" style="--w:0.0873"></span></td>
+  <td class="num r">1.6%</td>
+  <td class="num r">2.3%</td>
+  <td class="num r down">1.40×</td>
+  <td class="num r">57%</td>
+  <td class="num r">0.43</td>
+  <td class="num r">0.35</td>
+  <td class="num r down">−37%</td>
+</tr></tbody></table></div>
+  </div>
+</section>
+
+<section class="container sec" aria-labelledby="wi-h">
+  <div class="whatif">
+    <div class="panel">
+      <div class="sec-head"><div><h2 id="wi-h">Try a change</h2><p class="sub">Replayed on the past year of daily prices in euros. A description of the past, not a forecast.</p></div></div>
+      <form class="controls" aria-label="Scenario" onsubmit="return false">
+        <fieldset class="chips"><legend class="lg">Change</legend><label class="chip"><input type="radio" name="mode" value="add" checked>Add a stock</label><label class="chip"><input type="radio" name="mode" value="sell">Sell a holding</label></fieldset>
+        <fieldset class="chips" data-for="add"><legend class="lg">Stock, new money</legend><label class="chip"><input type="radio" name="tk" value="AAPL">AAPL</label><label class="chip"><input type="radio" name="tk" value="AMZN">AMZN</label><label class="chip"><input type="radio" name="tk" value="META">META</label><label class="chip"><input type="radio" name="tk" value="AVGO">AVGO</label><label class="chip"><input type="radio" name="tk" value="JPM">JPM</label><label class="chip"><input type="radio" name="tk" value="COST">COST</label><label class="chip"><input type="radio" name="tk" value="LLY">LLY</label><label class="chip"><input type="radio" name="tk" value="XOM" checked>XOM</label><label class="chip"><input type="radio" name="tk" value="TSLA">TSLA</label><label class="chip"><input type="radio" name="tk" value="SPY">SPY</label></fieldset>
+        <fieldset class="chips" data-for="add"><legend class="lg">Amount</legend><label class="chip"><input type="radio" name="amt" value="500">€500</label><label class="chip"><input type="radio" name="amt" value="1000" checked>€1 000</label><label class="chip"><input type="radio" name="amt" value="2500">€2 500</label><label class="chip"><input type="radio" name="amt" value="5000">€5 000</label></fieldset>
+        <fieldset class="chips" data-for="sell" hidden><legend class="lg">Holding</legend><label class="chip"><input type="radio" name="sl" value="QDVE.DE" checked>iShares S&amp;P 500 IT ETF</label><label class="chip"><input type="radio" name="sl" value="GOOGL">Alphabet A</label><label class="chip"><input type="radio" name="sl" value="NVDA">Nvidia</label><label class="chip"><input type="radio" name="sl" value="MSFT">Microsoft</label><label class="chip"><input type="radio" name="sl" value="ORCL">Oracle</label><label class="chip"><input type="radio" name="sl" value="EQQQ.DE">Amundi Nasdaq-100 ETF</label><label class="chip"><input type="radio" name="sl" value="^OMXH25">Nordnet Suomi Indeksi</label><label class="chip"><input type="radio" name="sl" value="CBUT.DE">iShares Blockchain ETF</label><label class="chip"><input type="radio" name="sl" value="ETH-EUR">Ether tracker</label></fieldset>
+      </form>
+      <div class="out" aria-live="polite">
+<div class="scn" data-scn="add-AAPL-500" hidden>
+  <h3>Add €500 of Apple (AAPL)</h3>
+  <p class="say">Over the past year AAPL had a correlation of 0.22 with your holdings, and 0.05 on your worst fifth of days. Volatility goes from 19.1% to 18.9%; AAPL would carry 0.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.9%</td><td class="num r up">−0.21 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.34 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">58.7%</td><td class="num r flat">+0.67 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.0%</td><td class="num r flat">+0.49 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.22</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.05</dd></div><div><dt>Its own volatility</dt><dd class="num">26%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+34%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AAPL-1000" hidden>
+  <h3>Add €1 000 of Apple (AAPL)</h3>
+  <p class="say">Over the past year AAPL had a correlation of 0.22 with your holdings, and 0.05 on your worst fifth of days. Volatility goes from 19.1% to 18.7%; AAPL would carry 1.1% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.7%</td><td class="num r up">−0.40 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.01</td><td class="num r up">−0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.3%</td><td class="num r up">+0.67 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">59.4%</td><td class="num r flat">+1.31 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.5%</td><td class="num r flat">+0.96 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.22</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.05</dd></div><div><dt>Its own volatility</dt><dd class="num">26%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+34%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.1%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AAPL-2500" hidden>
+  <h3>Add €2 500 of Apple (AAPL)</h3>
+  <p class="say">Over the past year AAPL had a correlation of 0.22 with your holdings, and 0.05 on your worst fifth of days. Volatility goes from 19.1% to 18.2%; AAPL would carry 3.4% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.2%</td><td class="num r up">−0.91 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.00</td><td class="num r up">−0.02</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.4%</td><td class="num r up">+1.60 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">61.2%</td><td class="num r flat">+3.13 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.8%</td><td class="num r flat">+2.28 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.22</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.05</dd></div><div><dt>Its own volatility</dt><dd class="num">26%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+34%</dd></div><div><dt>Its risk share after</dt><dd class="num">3.4%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AAPL-5000" hidden>
+  <h3>Add €5 000 of Apple (AAPL)</h3>
+  <p class="say">Over the past year AAPL had a correlation of 0.22 with your holdings, and 0.05 on your worst fifth of days. Volatility goes from 19.1% to 17.6%; AAPL would carry 8.3% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">17.6%</td><td class="num r up">−1.52 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.98</td><td class="num r up">−0.04</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−13.0%</td><td class="num r up">+3.00 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">63.9%</td><td class="num r flat">+5.82 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+7.8%</td><td class="num r flat">+4.25 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.22</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.05</dd></div><div><dt>Its own volatility</dt><dd class="num">26%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+34%</dd></div><div><dt>Its risk share after</dt><dd class="num">8.3%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AMZN-500" hidden>
+  <h3>Add €500 of Amazon (AMZN)</h3>
+  <p class="say">Over the past year AMZN had a correlation of 0.53 with your holdings, and 0.36 on your worst fifth of days. Volatility goes from 19.1% to 19.1%; AMZN would carry 1.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.1%</td><td class="num r up">−0.01 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.03</td><td class="num r down">0.00</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.28 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.8%</td><td class="num r flat">+0.26 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.53</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.36</dd></div><div><dt>Its own volatility</dt><dd class="num">34%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+17%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AMZN-1000" hidden>
+  <h3>Add €1 000 of Amazon (AMZN)</h3>
+  <p class="say">Over the past year AMZN had a correlation of 0.53 with your holdings, and 0.36 on your worst fifth of days. Volatility goes from 19.1% to 19.1%; AMZN would carry 3.1% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.1%</td><td class="num r up">−0.02 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.03</td><td class="num r down">+0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.5%</td><td class="num r up">+0.54 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.0%</td><td class="num r flat">+0.51 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.53</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.36</dd></div><div><dt>Its own volatility</dt><dd class="num">34%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+17%</dd></div><div><dt>Its risk share after</dt><dd class="num">3.1%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AMZN-2500" hidden>
+  <h3>Add €2 500 of Amazon (AMZN)</h3>
+  <p class="say">Over the past year AMZN had a correlation of 0.53 with your holdings, and 0.36 on your worst fifth of days. Volatility goes from 19.1% to 19.2%; AMZN would carry 8.2% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.2%</td><td class="num r down">+0.03 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.04</td><td class="num r down">+0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.7%</td><td class="num r up">+1.30 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.7%</td><td class="num r flat">+1.21 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.53</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.36</dd></div><div><dt>Its own volatility</dt><dd class="num">34%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+17%</dd></div><div><dt>Its risk share after</dt><dd class="num">8.2%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AMZN-5000" hidden>
+  <h3>Add €5 000 of Amazon (AMZN)</h3>
+  <p class="say">Over the past year AMZN had a correlation of 0.53 with your holdings, and 0.36 on your worst fifth of days. Volatility goes from 19.1% to 19.4%; AMZN would carry 16.8% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.4%</td><td class="num r down">+0.24 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.05</td><td class="num r down">+0.03</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−13.9%</td><td class="num r up">+2.14 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.8%</td><td class="num r flat">+2.23 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.53</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.36</dd></div><div><dt>Its own volatility</dt><dd class="num">34%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+17%</dd></div><div><dt>Its risk share after</dt><dd class="num">16.8%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-META-500" hidden>
+  <h3>Add €500 of Meta (META)</h3>
+  <p class="say">Over the past year META had a correlation of 0.37 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 19.1%; META would carry 1.4% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.1%</td><td class="num r up">−0.05 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.03</td><td class="num r down">0.00</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−16.0%</td><td class="num r up">+0.03 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.6%</td><td class="num r flat">+0.08 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.37</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">42%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+1%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.4%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-META-1000" hidden>
+  <h3>Add €1 000 of Meta (META)</h3>
+  <p class="say">Over the past year META had a correlation of 0.37 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 19.1%; META would carry 2.9% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.1%</td><td class="num r up">−0.08 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.03</td><td class="num r down">+0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.9%</td><td class="num r up">+0.07 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.7%</td><td class="num r flat">+0.15 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.37</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">42%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+1%</dd></div><div><dt>Its risk share after</dt><dd class="num">2.9%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-META-2500" hidden>
+  <h3>Add €2 500 of Meta (META)</h3>
+  <p class="say">Over the past year META had a correlation of 0.37 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 19.1%; META would carry 8.2% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.1%</td><td class="num r up">−0.06 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.04</td><td class="num r down">+0.02</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.8%</td><td class="num r up">+0.16 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.9%</td><td class="num r flat">+0.34 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.37</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">42%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+1%</dd></div><div><dt>Its risk share after</dt><dd class="num">8.2%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-META-5000" hidden>
+  <h3>Add €5 000 of Meta (META)</h3>
+  <p class="say">Over the past year META had a correlation of 0.37 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 19.4%; META would carry 18.2% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.4%</td><td class="num r down">+0.23 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.06</td><td class="num r down">+0.03</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.28 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.1%</td><td class="num r flat">+0.57 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.37</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">42%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+1%</dd></div><div><dt>Its risk share after</dt><dd class="num">18.2%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AVGO-500" hidden>
+  <h3>Add €500 of Broadcom (AVGO)</h3>
+  <p class="say">Over the past year AVGO had a correlation of 0.61 with your holdings, and 0.45 on your worst fifth of days. Volatility goes from 19.1% to 19.3%; AVGO would carry 2.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.3%</td><td class="num r down">+0.17 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.04</td><td class="num r down">+0.02</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.8%</td><td class="num r up">+0.15 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">58.7%</td><td class="num r flat">+0.67 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.4%</td><td class="num r flat">−0.10 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.61</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.45</dd></div><div><dt>Its own volatility</dt><dd class="num">48%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−10%</dd></div><div><dt>Its risk share after</dt><dd class="num">2.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AVGO-1000" hidden>
+  <h3>Add €1 000 of Broadcom (AVGO)</h3>
+  <p class="say">Over the past year AVGO had a correlation of 0.61 with your holdings, and 0.45 on your worst fifth of days. Volatility goes from 19.1% to 19.5%; AVGO would carry 5.0% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.5%</td><td class="num r down">+0.35 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.06</td><td class="num r down">+0.03</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.30 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">59.4%</td><td class="num r flat">+1.31 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.3%</td><td class="num r flat">−0.21 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.61</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.45</dd></div><div><dt>Its own volatility</dt><dd class="num">48%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−10%</dd></div><div><dt>Its risk share after</dt><dd class="num">5.0%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AVGO-2500" hidden>
+  <h3>Add €2 500 of Broadcom (AVGO)</h3>
+  <p class="say">Over the past year AVGO had a correlation of 0.61 with your holdings, and 0.45 on your worst fifth of days. Volatility goes from 19.1% to 20.1%; AVGO would carry 12.7% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">20.1%</td><td class="num r down">+0.95 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.10</td><td class="num r down">+0.08</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.3%</td><td class="num r up">+0.70 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">61.2%</td><td class="num r flat">+3.13 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.0%</td><td class="num r flat">−0.52 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.61</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.45</dd></div><div><dt>Its own volatility</dt><dd class="num">48%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−10%</dd></div><div><dt>Its risk share after</dt><dd class="num">12.7%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-AVGO-5000" hidden>
+  <h3>Add €5 000 of Broadcom (AVGO)</h3>
+  <p class="say">Over the past year AVGO had a correlation of 0.61 with your holdings, and 0.45 on your worst fifth of days. Volatility goes from 19.1% to 21.2%; AVGO would carry 24.7% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">21.2%</td><td class="num r down">+2.06 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.17</td><td class="num r down">+0.14</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.0%</td><td class="num r up">+0.97 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">63.9%</td><td class="num r flat">+5.82 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+2.5%</td><td class="num r flat">−1.03 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.61</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.45</dd></div><div><dt>Its own volatility</dt><dd class="num">48%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−10%</dd></div><div><dt>Its risk share after</dt><dd class="num">24.7%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-JPM-500" hidden>
+  <h3>Add €500 of JPMorgan (JPM)</h3>
+  <p class="say">Over the past year JPM had a correlation of 0.23 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 18.9%; JPM would carry 0.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.9%</td><td class="num r up">−0.22 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.00</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.26 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.7%</td><td class="num r flat">+0.21 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.23</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">23%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+13%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-JPM-1000" hidden>
+  <h3>Add €1 000 of JPMorgan (JPM)</h3>
+  <p class="say">Over the past year JPM had a correlation of 0.23 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 18.7%; JPM would carry 1.0% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.7%</td><td class="num r up">−0.42 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.5%</td><td class="num r up">+0.51 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.9%</td><td class="num r flat">+0.40 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.23</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">23%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+13%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.0%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-JPM-2500" hidden>
+  <h3>Add €2 500 of JPMorgan (JPM)</h3>
+  <p class="say">Over the past year JPM had a correlation of 0.23 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 18.2%; JPM would carry 3.1% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.2%</td><td class="num r up">−0.95 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.01</td><td class="num r up">−0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.8%</td><td class="num r up">+1.23 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.5%</td><td class="num r flat">+0.95 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.23</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">23%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+13%</dd></div><div><dt>Its risk share after</dt><dd class="num">3.1%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-JPM-5000" hidden>
+  <h3>Add €5 000 of JPMorgan (JPM)</h3>
+  <p class="say">Over the past year JPM had a correlation of 0.23 with your holdings, and 0.22 on your worst fifth of days. Volatility goes from 19.1% to 17.5%; JPM would carry 7.4% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">17.5%</td><td class="num r up">−1.63 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.00</td><td class="num r up">−0.03</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−13.7%</td><td class="num r up">+2.29 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.3%</td><td class="num r flat">+1.75 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.23</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.22</dd></div><div><dt>Its own volatility</dt><dd class="num">23%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+13%</dd></div><div><dt>Its risk share after</dt><dd class="num">7.4%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-COST-500" hidden>
+  <h3>Add €500 of Costco (COST)</h3>
+  <p class="say">Over the past year COST had a correlation of −0.18 with your holdings, and −0.08 on your worst fifth of days. Volatility goes from 19.1% to 18.8%; COST would carry 0.3% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.8%</td><td class="num r up">−0.36 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.01</td><td class="num r up">−0.02</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.5%</td><td class="num r up">+0.50 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.0%</td><td class="num r flat">+0.44 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.18</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">−0.08</dd></div><div><dt>Its own volatility</dt><dd class="num">21%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+29%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.3%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-COST-1000" hidden>
+  <h3>Add €1 000 of Costco (COST)</h3>
+  <p class="say">Over the past year COST had a correlation of −0.18 with your holdings, and −0.08 on your worst fifth of days. Volatility goes from 19.1% to 18.4%; COST would carry 0.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.4%</td><td class="num r up">−0.71 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.99</td><td class="num r up">−0.03</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.0%</td><td class="num r up">+0.99 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.4%</td><td class="num r flat">+0.87 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.18</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">−0.08</dd></div><div><dt>Its own volatility</dt><dd class="num">21%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+29%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-COST-2500" hidden>
+  <h3>Add €2 500 of Costco (COST)</h3>
+  <p class="say">Over the past year COST had a correlation of −0.18 with your holdings, and −0.08 on your worst fifth of days. Volatility goes from 19.1% to 17.5%; COST would carry 0.8% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">17.5%</td><td class="num r up">−1.64 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.95</td><td class="num r up">−0.07</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−13.6%</td><td class="num r up">+2.39 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.6%</td><td class="num r flat">+2.06 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.18</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">−0.08</dd></div><div><dt>Its own volatility</dt><dd class="num">21%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+29%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.8%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-COST-5000" hidden>
+  <h3>Add €5 000 of Costco (COST)</h3>
+  <p class="say">Over the past year COST had a correlation of −0.18 with your holdings, and −0.08 on your worst fifth of days. Volatility goes from 19.1% to 16.2%; COST would carry 0.0% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">16.2%</td><td class="num r up">−2.93 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.89</td><td class="num r up">−0.13</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−11.5%</td><td class="num r up">+4.49 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+7.4%</td><td class="num r flat">+3.83 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.18</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">−0.08</dd></div><div><dt>Its own volatility</dt><dd class="num">21%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+29%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.0%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-LLY-500" hidden>
+  <h3>Add €500 of Eli Lilly (LLY)</h3>
+  <p class="say">Over the past year LLY had a correlation of −0.07 with your holdings, and 0.00 on your worst fifth of days. Volatility goes from 19.1% to 18.8%; LLY would carry 0.1% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.8%</td><td class="num r up">−0.33 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.01</td><td class="num r up">−0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.5%</td><td class="num r up">+0.55 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.2%</td><td class="num r flat">+0.63 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.07</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.00</dd></div><div><dt>Its own volatility</dt><dd class="num">35%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+40%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.1%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-LLY-1000" hidden>
+  <h3>Add €1 000 of Eli Lilly (LLY)</h3>
+  <p class="say">Over the past year LLY had a correlation of −0.07 with your holdings, and 0.00 on your worst fifth of days. Volatility goes from 19.1% to 18.5%; LLY would carry 0.0% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.5%</td><td class="num r up">−0.64 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.00</td><td class="num r up">−0.02</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.9%</td><td class="num r up">+1.08 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.8%</td><td class="num r flat">+1.24 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.07</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.00</dd></div><div><dt>Its own volatility</dt><dd class="num">35%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+40%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.0%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-LLY-2500" hidden>
+  <h3>Add €2 500 of Eli Lilly (LLY)</h3>
+  <p class="say">Over the past year LLY had a correlation of −0.07 with your holdings, and 0.00 on your worst fifth of days. Volatility goes from 19.1% to 17.7%; LLY would carry 1.2% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">17.7%</td><td class="num r up">−1.41 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.98</td><td class="num r up">−0.05</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−13.5%</td><td class="num r up">+2.52 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+6.5%</td><td class="num r flat">+2.96 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.07</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.00</dd></div><div><dt>Its own volatility</dt><dd class="num">35%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+40%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.2%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-LLY-5000" hidden>
+  <h3>Add €5 000 of Eli Lilly (LLY)</h3>
+  <p class="say">Over the past year LLY had a correlation of −0.07 with your holdings, and 0.00 on your worst fifth of days. Volatility goes from 19.1% to 16.9%; LLY would carry 6.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">16.9%</td><td class="num r up">−2.26 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.94</td><td class="num r up">−0.09</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−13.7%</td><td class="num r up">+2.34 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+9.0%</td><td class="num r flat">+5.49 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.07</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.00</dd></div><div><dt>Its own volatility</dt><dd class="num">35%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+40%</dd></div><div><dt>Its risk share after</dt><dd class="num">6.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-XOM-500" hidden>
+  <h3>Add €500 of Exxon Mobil (XOM)</h3>
+  <p class="say">Over the past year XOM had a correlation of −0.27 with your holdings, and 0.19 on your worst fifth of days. Volatility goes from 19.1% to 18.7%; XOM would carry 0.6% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.7%</td><td class="num r up">−0.42 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.00</td><td class="num r up">−0.02</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.30 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.3%</td><td class="num r flat">+0.79 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.27</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.19</dd></div><div><dt>Its own volatility</dt><dd class="num">28%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+56%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.6%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-XOM-1000">
+  <h3>Add €1 000 of Exxon Mobil (XOM)</h3>
+  <p class="say">Over the past year XOM had a correlation of −0.27 with your holdings, and 0.19 on your worst fifth of days. Volatility goes from 19.1% to 18.3%; XOM would carry 1.1% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.3%</td><td class="num r up">−0.81 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.98</td><td class="num r up">−0.04</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.4%</td><td class="num r up">+0.60 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.1%</td><td class="num r flat">+1.57 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.27</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.19</dd></div><div><dt>Its own volatility</dt><dd class="num">28%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+56%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.1%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-XOM-2500" hidden>
+  <h3>Add €2 500 of Exxon Mobil (XOM)</h3>
+  <p class="say">Over the past year XOM had a correlation of −0.27 with your holdings, and 0.19 on your worst fifth of days. Volatility goes from 19.1% to 17.3%; XOM would carry 1.8% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">17.3%</td><td class="num r up">−1.86 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.93</td><td class="num r up">−0.10</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.6%</td><td class="num r up">+1.43 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+7.3%</td><td class="num r flat">+3.75 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.27</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.19</dd></div><div><dt>Its own volatility</dt><dd class="num">28%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+56%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.8%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-XOM-5000" hidden>
+  <h3>Add €5 000 of Exxon Mobil (XOM)</h3>
+  <p class="say">Over the past year XOM had a correlation of −0.27 with your holdings, and 0.19 on your worst fifth of days. Volatility goes from 19.1% to 15.9%; XOM would carry 0.7% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">15.9%</td><td class="num r up">−3.24 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.84</td><td class="num r up">−0.18</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−13.4%</td><td class="num r up">+2.61 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+10.6%</td><td class="num r flat">+7.03 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">−0.27</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.19</dd></div><div><dt>Its own volatility</dt><dd class="num">28%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+56%</dd></div><div><dt>Its risk share after</dt><dd class="num">0.7%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-TSLA-500" hidden>
+  <h3>Add €500 of Tesla (TSLA)</h3>
+  <p class="say">Over the past year TSLA had a correlation of 0.56 with your holdings, and 0.56 on your worst fifth of days. Volatility goes from 19.1% to 19.2%; TSLA would carry 2.2% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.2%</td><td class="num r down">+0.11 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.04</td><td class="num r down">+0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.27 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.5%</td><td class="num r flat">−0.06 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.56</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.56</dd></div><div><dt>Its own volatility</dt><dd class="num">45%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−7%</dd></div><div><dt>Its risk share after</dt><dd class="num">2.2%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-TSLA-1000" hidden>
+  <h3>Add €1 000 of Tesla (TSLA)</h3>
+  <p class="say">Over the past year TSLA had a correlation of 0.56 with your holdings, and 0.56 on your worst fifth of days. Volatility goes from 19.1% to 19.4%; TSLA would carry 4.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.4%</td><td class="num r down">+0.24 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.05</td><td class="num r down">+0.03</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.5%</td><td class="num r up">+0.53 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.4%</td><td class="num r flat">−0.11 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.56</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.56</dd></div><div><dt>Its own volatility</dt><dd class="num">45%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−7%</dd></div><div><dt>Its risk share after</dt><dd class="num">4.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-TSLA-2500" hidden>
+  <h3>Add €2 500 of Tesla (TSLA)</h3>
+  <p class="say">Over the past year TSLA had a correlation of 0.56 with your holdings, and 0.56 on your worst fifth of days. Volatility goes from 19.1% to 19.8%; TSLA would carry 11.5% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.8%</td><td class="num r down">+0.68 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.09</td><td class="num r down">+0.07</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.7%</td><td class="num r up">+1.28 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.2%</td><td class="num r flat">−0.29 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.56</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.56</dd></div><div><dt>Its own volatility</dt><dd class="num">45%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−7%</dd></div><div><dt>Its risk share after</dt><dd class="num">11.5%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-TSLA-5000" hidden>
+  <h3>Add €5 000 of Tesla (TSLA)</h3>
+  <p class="say">Over the past year TSLA had a correlation of 0.56 with your holdings, and 0.56 on your worst fifth of days. Volatility goes from 19.1% to 20.7%; TSLA would carry 22.9% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">20.7%</td><td class="num r down">+1.56 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.15</td><td class="num r down">+0.12</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.1%</td><td class="num r up">+1.93 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+2.9%</td><td class="num r flat">−0.61 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.56</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.56</dd></div><div><dt>Its own volatility</dt><dd class="num">45%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−7%</dd></div><div><dt>Its risk share after</dt><dd class="num">22.9%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-SPY-500" hidden>
+  <h3>Add €500 of Index fund (SPY)</h3>
+  <p class="say">Over the past year SPY had a correlation of 0.79 with your holdings, and 0.64 on your worst fifth of days. Volatility goes from 19.1% to 19.0%; SPY would carry 1.0% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.0%</td><td class="num r up">−0.12 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.00</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.8%</td><td class="num r up">+0.18 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.6</td><td class="num r up">+0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.1%</td><td class="num r flat">−0.92 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.7%</td><td class="num r flat">+0.17 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.79</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.64</dd></div><div><dt>Its own volatility</dt><dd class="num">15%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+14%</dd></div><div><dt>Its risk share after</dt><dd class="num">1.0%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-SPY-1000" hidden>
+  <h3>Add €1 000 of Index fund (SPY)</h3>
+  <p class="say">Over the past year SPY had a correlation of 0.79 with your holdings, and 0.64 on your worst fifth of days. Volatility goes from 19.1% to 18.9%; SPY would carry 2.0% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.9%</td><td class="num r up">−0.23 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.00</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.6%</td><td class="num r up">+0.35 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.7</td><td class="num r up">+0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.2%</td><td class="num r flat">−1.81 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+3.9%</td><td class="num r flat">+0.34 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.79</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.64</dd></div><div><dt>Its own volatility</dt><dd class="num">15%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+14%</dd></div><div><dt>Its risk share after</dt><dd class="num">2.0%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-SPY-2500" hidden>
+  <h3>Add €2 500 of Index fund (SPY)</h3>
+  <p class="say">Over the past year SPY had a correlation of 0.79 with your holdings, and 0.64 on your worst fifth of days. Volatility goes from 19.1% to 18.6%; SPY would carry 4.8% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.6%</td><td class="num r up">−0.54 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.00</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.2%</td><td class="num r up">+0.84 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.1</td><td class="num r up">+0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">53.7%</td><td class="num r flat">−4.33 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.3%</td><td class="num r flat">+0.81 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.79</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.64</dd></div><div><dt>Its own volatility</dt><dd class="num">15%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+14%</dd></div><div><dt>Its risk share after</dt><dd class="num">4.8%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="add-SPY-5000" hidden>
+  <h3>Add €5 000 of Index fund (SPY)</h3>
+  <p class="say">Over the past year SPY had a correlation of 0.79 with your holdings, and 0.64 on your worst fifth of days. Volatility goes from 19.1% to 18.1%; SPY would carry 9.4% of the risk.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.1%</td><td class="num r up">−0.99 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.00</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.4%</td><td class="num r up">+1.57 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">7.4</td><td class="num r up">+1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">50.0%</td><td class="num r flat">−8.06 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.0%</td><td class="num r flat">+1.51 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with your holdings</dt><dd class="num">0.79</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.64</dd></div><div><dt>Its own volatility</dt><dd class="num">15%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+14%</dd></div><div><dt>Its risk share after</dt><dd class="num">9.4%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-QDVE.DE" hidden>
+  <h3>Sell iShares S&amp;P 500 IT ETF (€8 000), spread the money over the rest</h3>
+  <p class="say">iShares S&amp;P 500 IT ETF had a correlation of 0.64 with the rest of the portfolio. Without it volatility goes from 19.1% to 20.3% and the technology share to 44%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">20.3%</td><td class="num r down">+1.14 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.10</td><td class="num r down">+0.08</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.9%</td><td class="num r up">+0.11 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.0</td><td class="num r down">−0.4</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">44.0%</td><td class="num r flat">−14.08 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">−0.2%</td><td class="num r flat">−3.78 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.64</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.51</dd></div><div><dt>Its own volatility</dt><dd class="num">23%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+14%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-GOOGL" hidden>
+  <h3>Sell Alphabet A (€6 000), spread the money over the rest</h3>
+  <p class="say">Alphabet A had a correlation of 0.32 with the rest of the portfolio. Without it volatility goes from 19.1% to 20.1% and the technology share to 73%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">20.1%</td><td class="num r down">+0.98 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.98</td><td class="num r up">−0.05</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.9%</td><td class="num r up">+0.14 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">5.4</td><td class="num r down">−1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">72.6%</td><td class="num r flat">+14.52 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.3%</td><td class="num r flat">+1.74 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.32</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.41</dd></div><div><dt>Its own volatility</dt><dd class="num">33%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−7%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-NVDA" hidden>
+  <h3>Sell Nvidia (€4 000), spread the money over the rest</h3>
+  <p class="say">Nvidia had a correlation of 0.54 with the rest of the portfolio. Without it volatility goes from 19.1% to 18.4% and the technology share to 52%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.4%</td><td class="num r up">−0.69 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.94</td><td class="num r up">−0.09</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−14.1%</td><td class="num r up">+1.85 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">5.4</td><td class="num r down">−1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">52.1%</td><td class="num r flat">−5.96 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.5%</td><td class="num r flat">+0.99 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.54</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.53</dd></div><div><dt>Its own volatility</dt><dd class="num">38%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−7%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-MSFT" hidden>
+  <h3>Sell Microsoft (€4 000), spread the money over the rest</h3>
+  <p class="say">Microsoft had a correlation of 0.39 with the rest of the portfolio. Without it volatility goes from 19.1% to 19.7% and the technology share to 52%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.7%</td><td class="num r down">+0.52 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.05</td><td class="num r down">+0.02</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−18.0%</td><td class="num r down">−1.99 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">5.4</td><td class="num r down">−1.0</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">52.1%</td><td class="num r flat">−5.96 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+2.1%</td><td class="num r flat">−1.46 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.39</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.21</dd></div><div><dt>Its own volatility</dt><dd class="num">33%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+9%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-^OMXH25" hidden>
+  <h3>Sell Nordnet Suomi Indeksi (€3 000), spread the money over the rest</h3>
+  <p class="say">Nordnet Suomi Indeksi had a correlation of 0.29 with the rest of the portfolio. Without it volatility goes from 19.1% to 20.7% and the technology share to 65%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">20.7%</td><td class="num r down">+1.60 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.10</td><td class="num r down">+0.08</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−17.2%</td><td class="num r down">−1.24 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">5.5</td><td class="num r down">−0.9</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">64.5%</td><td class="num r flat">+6.45 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+2.3%</td><td class="num r flat">−1.27 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.29</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.29</dd></div><div><dt>Its own volatility</dt><dd class="num">15%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+14%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-EQQQ.DE" hidden>
+  <h3>Sell Amundi Nasdaq-100 ETF (€2 500), spread the money over the rest</h3>
+  <p class="say">Amundi Nasdaq-100 ETF had a correlation of 0.77 with the rest of the portfolio. Without it volatility goes from 19.1% to 19.6% and the technology share to 63%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.6%</td><td class="num r down">+0.49 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.05</td><td class="num r down">+0.03</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−16.4%</td><td class="num r down">−0.35 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">5.6</td><td class="num r down">−0.8</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">63.3%</td><td class="num r flat">+5.28 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+2.8%</td><td class="num r flat">−0.73 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.77</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.58</dd></div><div><dt>Its own volatility</dt><dd class="num">18%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">+11%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-ORCL" hidden>
+  <h3>Sell Oracle (€1 500), spread the money over the rest</h3>
+  <p class="say">Oracle had a correlation of 0.59 with the rest of the portfolio. Without it volatility goes from 19.1% to 18.2% and the technology share to 56%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">18.2%</td><td class="num r up">−0.94 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">0.97</td><td class="num r up">−0.05</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−16.0%</td><td class="num r up">+0.01 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">5.8</td><td class="num r down">−0.5</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">56.0%</td><td class="num r flat">−2.04 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+5.7%</td><td class="num r flat">+2.18 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.59</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.37</dd></div><div><dt>Its own volatility</dt><dd class="num">60%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−39%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-CBUT.DE" hidden>
+  <h3>Sell iShares Blockchain ETF (€500), spread the money over the rest</h3>
+  <p class="say">iShares Blockchain ETF had a correlation of 0.59 with the rest of the portfolio. Without it volatility goes from 19.1% to 19.0% and the technology share to 57%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.0%</td><td class="num r up">−0.16 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.7%</td><td class="num r up">+0.27 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.2</td><td class="num r down">−0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">57.4%</td><td class="num r flat">−0.66 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.1%</td><td class="num r flat">+0.57 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.59</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.42</dd></div><div><dt>Its own volatility</dt><dd class="num">49%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−32%</dd></div></dl>
+  </div>
+</div>
+<div class="scn" data-scn="sell-ETH-EUR" hidden>
+  <h3>Sell Ether tracker (€500), spread the money over the rest</h3>
+  <p class="say">Ether tracker had a correlation of 0.43 with the rest of the portfolio. Without it volatility goes from 19.1% to 19.0% and the technology share to 59%.</p>
+  <div class="scn-grid">
+    <div class="table-wrap"><table class="ba"><thead><tr><th scope="col">Measure</th><th scope="col" class="r">Now</th><th scope="col" class="r">After</th><th scope="col" class="r">Change</th></tr></thead>
+    <tbody><tr><th scope="row">Volatility, 1 year</th><td class="num r">19.1%</td><td class="num r">19.0%</td><td class="num r up">−0.10 pp</td></tr><tr><th scope="row">Beta to S&P 500</th><td class="num r">1.02</td><td class="num r">1.02</td><td class="num r up">−0.01</td></tr><tr><th scope="row">Worst fall, past year</th><td class="num r">−16.0%</td><td class="num r">−15.8%</td><td class="num r up">+0.25 pp</td></tr><tr><th scope="row">Effective holdings</th><td class="num r">6.4</td><td class="num r">6.2</td><td class="num r down">−0.2</td></tr><tr><th scope="row">Technology share</th><td class="num r">58.1%</td><td class="num r">59.0%</td><td class="num r flat">+0.98 pp</td></tr><tr><th scope="row">Past year, these weights</th><td class="num r">+3.5%</td><td class="num r">+4.1%</td><td class="num r flat">+0.61 pp</td></tr></tbody></table></div>
+    <dl class="facts one"><div><dt>Correlation with the rest</dt><dd class="num">0.43</dd></div><div><dt>On your worst 20% of days</dt><dd class="num">0.35</dd></div><div><dt>Its own volatility</dt><dd class="num">57%</dd></div><div><dt>Its past year, in euros</dt><dd class="num">−37%</dd></div></dl>
+  </div>
+</div></div>
+    </div>
+    <div class="panel flush">
+      <div class="sec-head"><div><h2 id="rank-h">Each candidate at €1,000</h2><p class="sub">Sorted by the change in volatility, largest drop first.</p></div></div>
+      <div class="table-wrap"><table class="rank" aria-labelledby="rank-h">
+        <thead><tr><th scope="col">Stock</th><th scope="col" class="r">Correlation</th><th scope="col" class="r">Bad days</th>
+        <th scope="col" class="r">Volatility</th><th scope="col" class="r">Beta</th><th scope="col" class="r">Worst fall</th><th scope="col" class="r">Its year</th></tr></thead>
+        <tbody><tr><th scope="row"><span class="tk">XOM</span> <span class="nm2">Exxon Mobil</span></th><td class="num r">−0.27</td><td class="num r">0.19</td><td class="num r up">−0.81 pp</td><td class="num r up">−0.04</td><td class="num r up">+0.60 pp</td><td class="num r up">+56%</td></tr><tr><th scope="row"><span class="tk">COST</span> <span class="nm2">Costco</span></th><td class="num r">−0.18</td><td class="num r">−0.08</td><td class="num r up">−0.71 pp</td><td class="num r up">−0.03</td><td class="num r up">+0.99 pp</td><td class="num r up">+29%</td></tr><tr><th scope="row"><span class="tk">LLY</span> <span class="nm2">Eli Lilly</span></th><td class="num r">−0.07</td><td class="num r">0.00</td><td class="num r up">−0.64 pp</td><td class="num r up">−0.02</td><td class="num r up">+1.08 pp</td><td class="num r up">+40%</td></tr><tr><th scope="row"><span class="tk">JPM</span> <span class="nm2">JPMorgan</span></th><td class="num r">0.23</td><td class="num r">0.22</td><td class="num r up">−0.42 pp</td><td class="num r up">−0.01</td><td class="num r up">+0.51 pp</td><td class="num r up">+13%</td></tr><tr><th scope="row"><span class="tk">AAPL</span> <span class="nm2">Apple</span></th><td class="num r">0.22</td><td class="num r">0.05</td><td class="num r up">−0.40 pp</td><td class="num r up">−0.01</td><td class="num r up">+0.67 pp</td><td class="num r up">+34%</td></tr><tr><th scope="row"><span class="tk">SPY</span> <span class="nm2">Index fund</span></th><td class="num r">0.79</td><td class="num r">0.64</td><td class="num r up">−0.23 pp</td><td class="num r up">−0.00</td><td class="num r up">+0.35 pp</td><td class="num r up">+14%</td></tr><tr><th scope="row"><span class="tk">META</span> <span class="nm2">Meta</span></th><td class="num r">0.37</td><td class="num r">0.22</td><td class="num r up">−0.08 pp</td><td class="num r down">+0.01</td><td class="num r up">+0.07 pp</td><td class="num r up">+1%</td></tr><tr><th scope="row"><span class="tk">AMZN</span> <span class="nm2">Amazon</span></th><td class="num r">0.53</td><td class="num r">0.36</td><td class="num r up">−0.02 pp</td><td class="num r down">+0.01</td><td class="num r up">+0.54 pp</td><td class="num r up">+17%</td></tr><tr><th scope="row"><span class="tk">TSLA</span> <span class="nm2">Tesla</span></th><td class="num r">0.56</td><td class="num r">0.56</td><td class="num r down">+0.24 pp</td><td class="num r down">+0.03</td><td class="num r up">+0.53 pp</td><td class="num r down">−7%</td></tr><tr><th scope="row"><span class="tk">AVGO</span> <span class="nm2">Broadcom</span></th><td class="num r">0.61</td><td class="num r">0.45</td><td class="num r down">+0.35 pp</td><td class="num r down">+0.03</td><td class="num r up">+0.30 pp</td><td class="num r down">−10%</td></tr></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<section class="container sec" aria-labelledby="gl-h">
+  <div class="panel">
+    <div class="sec-head"><div><h2 id="gl-h">What the numbers mean</h2><p class="sub">The idea, the formula, then your own number.</p></div></div>
+    <dl class="gloss"><div class="g"><dt>Volatility</dt><dd><p>How much the value swings in a typical year. About two years in three stay within one volatility of the average.</p><p class="fm">σ = std(daily returns) × √252</p><p class="ex">19.1%: on €31 000, a typical year moves the value by about €5 932 either way.</p></dd></div><div class="g"><dt>Beta</dt><dd><p>How strongly the portfolio follows the S&P 500, both measured in euros. 1.0 moves with the market.</p><p class="fm">β = cov(portfolio, market) ÷ var(market)</p><p class="ex">1.02: a 10% market fall has come with about 10.2% for you.</p></dd></div><div class="g"><dt>Correlation</dt><dd><p>Whether a stock moves with the rest of your holdings: 1 together, 0 unrelated, negative in opposite directions.</p><p class="fm">ρ = cov(stock, rest) ÷ (σ_stock σ_rest)</p><p class="ex">Nvidia 0.54, Suomi Indeksi 0.29.</p></dd></div><div class="g"><dt>On bad days</dt><dd><p>The same correlation measured only on your worst fifth of days. Diversification that disappears in a sell-off shows up here.</p><p class="fm">ρ on days where portfolio return ≤ its 20th percentile</p><p class="ex">Alphabet rises from 0.32 to 0.41: it falls with the rest more often than it seems.</p></dd></div><div class="g"><dt>Risk share</dt><dd><p>How much of the portfolio’s swing each holding causes. The shares add up to 100%.</p><p class="fm">RCᵢ = wᵢ (Σw)ᵢ ÷ σ²</p><p class="ex">Nvidia is 13% of the money and 18% of the risk.</p></dd></div><div class="g"><dt>Effective holdings</dt><dd><p>How many equal-sized positions your weights are worth.</p><p class="fm">N = 1 ÷ Σ wᵢ²</p><p class="ex">6.4: ten positions behave like about five equal ones.</p></dd></div><div class="g"><dt>Worst fall</dt><dd><p>The deepest drop from a high point during the past year, with today’s weights held fixed.</p><p class="fm">min (value ÷ running peak − 1)</p><p class="ex">−16.0% with the current mix.</p></dd></div></dl>
+  </div>
+</section>
+
+</main>
+<footer class="foot"><div class="container">
+  <p>Example portfolio with invented values; the real build reads the owner’s holdings from a private local file. Prices and EUR/USD from Yahoo Finance, fetched 18 Nov 2026 at 16:55 Helsinki time; risk window 2025-11-28 to 2026-11-17.</p>
+  <p>Stand-ins where Yahoo has no series: OMX Helsinki 25 for Nordnet Suomi Indeksi, Invesco Nasdaq-100 for the Amundi Nasdaq-100 ETF, ETH in euros for the Ether tracker. Cash (€1 000) counts as zero return.</p>
+  <p>Today’s weights are held fixed over the past year, so the figures describe this mix, not your actual history. Not investment advice.</p>
+</div></footer>
+
+
+<script>
+(() => {
+  const f = document.querySelector('.controls');
+  const val = n => (f.querySelector('input[name="' + n + '"]:checked') || {}).value;
+  const show = () => {
+    const m = val('mode');
+    f.querySelectorAll('[data-for]').forEach(el => { el.hidden = el.dataset.for !== m; });
+    const id = m === 'add' ? 'add-' + val('tk') + '-' + val('amt') : 'sell-' + val('sl');
+    document.querySelectorAll('[data-scn]').forEach(el => { el.hidden = el.dataset.scn !== id; });
+  };
+  f.addEventListener('change', show); show();
+})();
+</script>
+</body>
+</html>

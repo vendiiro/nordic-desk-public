@@ -1,0 +1,13 @@
+# News briefs (`nordic-desk brief <ticker>`). The key comes from ANTHROPIC_API_KEY or `ant auth login`, never from this file.
+model = "claude-opus-5-5"
+effort = "low"            # low | medium | high: more effort, more tokens per brief
+monthly_cap_usd = 5.0     # no new brief once this month's spend reaches the cap
+days = 30                 # how far back to look for articles
+max_articles = 20
+min_chars = 1200          # shorter extracted text counts as a paywall teaser or stub and is skipped
+# USD per million [input, output] tokens (Anthropic list prices). The fallback models run when the main model declines;
+# a model missing here is priced at the dearest one listed.
+prices = { "claude-opus-5-5" = [4.0, 20.0], "claude-opus-5" = [5.0, 25.0], "claude-opus-4-8" = [5.0, 25.0] }
+# Sites behind paywalls: skipped, never bypassed. Add any you meet.
+paywall = ["seekingalpha.com", "investors.com", "wsj.com", "bloomberg.com", "ft.com", "barrons.com", "economist.com",
+           "nytimes.com", "washingtonpost.com", "marketwatch.com", "thetimes.co.uk", "hs.fi", "kauppalehti.fi", "handelsblatt.com"]

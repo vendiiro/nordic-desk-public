@@ -1,0 +1,8 @@
+# New money split by `nordic-desk plan`: steps of `step` euros, each to the idea that lowers volatility most,
+# never taking the technology share above tech_max.
+tech_max = 0.5
+step = 500
+amount = 5000
+# Amounts of new money shown on each candidate card, and the one selected when the page opens.
+card_amounts = [1000, 2000, 3000, 5000]
+card_default = 2000

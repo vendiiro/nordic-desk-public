@@ -1,0 +1,5 @@
+# US stocks on the watchlist. Holdings are added automatically when prices are updated.
+tickers = ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "AVGO", "JPM", "COST", "LLY", "XOM", "TSLA", "ORCL"]
+
+# Yahoo sector Technology: counted in the technology share when held or added.
+tech = ["AAPL", "MSFT", "NVDA", "AVGO", "ORCL"]

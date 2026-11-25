@@ -1,0 +1,30 @@
+# Thresholds for the analysis page verdicts. Judgement calls, not backtested; see docs/superpowers/specs/2026-11-20-stock-analysis-page-design.md.
+
+[entry]                 # 6-12 month entry verdict
+pullback_pct_b = 0.2    # %B below this in an uptrend = pullback
+pullback_rsi = 40       # or RSI below this
+stretched_rsi = 70      # RSI above this = Stretched
+stretched_pct_b = 0.95  # or %B above this
+trend_lookback = 21     # 200-day average "rising" = higher than this many trading days ago
+
+[long]                  # long-haul valuation verdict
+attractive_below = 0.30 # P/E percentile in its own trailing window
+expensive_above = 0.70
+window_days = 1260      # trailing window for percentile and median (5 years)
+min_days = 504          # P/E history needed before a verdict (2 years)
+eps_lag_days = 90       # EPS counts from fiscal year-end + this many days
+big_3y = 1.0            # 3-year return above +100% gets the long-run-winner note
+
+[quality]               # same checks as market-leaderboard settings.toml
+min_score = 60
+roe_min = 0.12
+margin_min = 0.08
+debt_to_equity_max = 150
+market_cap_min = 1_000_000_000   # USD
+must_pass = ["net_margin_positive"]
+distorted_roe_above = 1.0
+
+[goal]                  # Goal page: 1-10-year range of the portfolio (docs/superpowers/specs/2026-11-25-goal-range-design.md)
+drift = 0.07            # stated yearly return in euros the paths are re-centred on; an assumption, shown on the page with +/-2 points
+n_paths = 5000          # bootstrap paths
+block = 21              # days per bootstrap block (about a month)

@@ -1,0 +1,138 @@
+<title>Nordic Stock Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400;500;600&family=Atkinson+Hyperlegible+Mono:wght@400&display=swap">
+<style>
+/* Layout: a short brief, then three direction rows (frame left, reasoning right), then the shared parts and the next step. */
+:root {
+  --bg: oklch(98.5% 0.004 240); --bg-2: oklch(95.5% 0.007 240); --fg: oklch(21% 0.012 250); --muted: oklch(48% 0.014 250);
+  --rule: oklch(89% 0.008 240); --accent: oklch(44% 0.13 250); --focus: oklch(55% 0.16 250);
+  --font-body: "Host Grotesk", ui-sans-serif, system-ui, sans-serif; --font-num: "Atkinson Hyperlegible Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: oklch(16% 0.012 245); --bg-2: oklch(20% 0.014 245); --fg: oklch(95% 0.006 230); --muted: oklch(72% 0.014 230);
+  --rule: oklch(29% 0.014 245); --accent: oklch(80% 0.11 245); --focus: oklch(80% 0.11 245); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: oklch(16% 0.012 245); --bg-2: oklch(20% 0.014 245); --fg: oklch(95% 0.006 230); --muted: oklch(72% 0.014 230);
+  --rule: oklch(29% 0.014 245); --accent: oklch(80% 0.11 245); --focus: oklch(80% 0.11 245); color-scheme: dark; }
+html, body { overflow-x: clip; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 48px 64px; }
+.wrap { max-width: 1120px; margin-inline: auto; display: grid; gap: 56px; }
+h1, h2, h3 { margin: 0; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; text-wrap: balance; }
+h1 { font-size: clamp(2rem, 4vw, 2.75rem); max-width: 22ch; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0; max-width: 64ch; }
+a { color: var(--accent); text-underline-offset: 0.18em; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.intro { display: grid; gap: 16px; }
+.muted { color: var(--muted); }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 0.9rem; color: var(--muted); padding: 0; margin: 0; list-style: none; }
+.facts b { color: var(--fg); font-weight: 500; }
+.dir { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; padding-top: 28px; border-top: 1px solid var(--rule); align-items: start; }
+.shot { display: block; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--bg-2); }
+.shot img { display: block; width: 100%; height: auto; transition: opacity 160ms ease-out; }
+.shot:hover img { opacity: 0.88; }
+.text { display: grid; gap: 14px; min-width: 0; }
+.fi { font-family: var(--font-num); font-size: 0.85rem; color: var(--muted); }
+dl { margin: 0; display: grid; gap: 10px; }
+dl div { display: grid; gap: 2px; }
+dt { font-size: 0.85rem; color: var(--muted); }
+dd { margin: 0; }
+.open { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--fg); border-radius: 6px; color: var(--fg); text-decoration: none; font-weight: 500; justify-self: start; transition: background-color 120ms ease-out; }
+.open:hover { background: var(--bg-2); }
+.open:active { transform: translateY(1px); }
+.shared { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; border-top: 1px solid var(--rule); padding-top: 28px; }
+.shared ul { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; }
+.next { border: 1px solid var(--rule); border-radius: 8px; padding: 24px; display: grid; gap: 12px; background: var(--bg-2); }
+@media (max-width: 52rem) { .dir, .shared { grid-template-columns: minmax(0, 1fr); } body { padding-block: 32px 48px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <h1>Directions for a Nordic, technical stock desk</h1>
+    <p>Each frame is a working HTML mockup that shows real Yahoo Finance data for 12 US stocks. Each one covers the same four jobs: scan the watchlist, check the portfolio, compare up to four stocks and dig into one. They differ in what they put first.</p>
+    <ul class="facts">
+      <li>Prices: <b>US close 17 Nov 2026</b></li>
+      <li>Fetched <b>18 Nov, 13:34 Helsinki</b></li>
+      <li>Desk frames: <b>example portfolio</b></li>
+      <li>Impact frame: <b>example portfolio, invented values</b></li>
+    </ul>
+  </header>
+
+  <section class="dir" aria-labelledby="d1">
+    <a class="shot" href="huurre.html" aria-label="Open the Huurre frame"><img src="shots/huurre.png" alt="Huurre: light desk with a watchlist table on the left and the selected stock on the right" width="1440" height="1000"></a>
+    <div class="text">
+      <h2 id="d1">Huurre</h2>
+      <p class="fi">Finnish for hoarfrost</p>
+      <p>A light, dense desk. The watchlist is a ledger: every row shows the price, today’s move, a 52-week range rule and a three-month trace. Click a row and the stock opens on the right.</p>
+      <dl>
+        <div><dt>Best at</dt><dd>Daily scanning. Everything is on one screen with no scrolling.</dd></div>
+        <div><dt>Trade-off</dt><dd>The quietest of the three. It impresses through precision, not spectacle.</dd></div>
+        <div><dt>Also shows</dt><dd>The watchlist in its loading, empty and error states.</dd></div>
+      </dl>
+      <a class="open" href="huurre.html">Open Huurre</a>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d2">
+    <a class="shot" href="kaamos.html" aria-label="Open the Kaamos frame"><img src="shots/kaamos.png" alt="Kaamos: dark screen with a momentum map of the watchlist and the example portfolio beside it" width="1440" height="1000"></a>
+    <div class="text">
+      <h2 id="d2">Kaamos</h2>
+      <p class="fi">Finnish for the polar night</p>
+      <p>A dark instrument screen built around a momentum map. Each stock sits by its 6-month return (across) and 1-month return (up), with SPY as the crosshair. Your holdings are ringed, so you see at a glance which ones are falling behind.</p>
+      <dl>
+        <div><dt>Best at</dt><dd>Seeing the whole watchlist as one picture and spotting turns.</dd></div>
+        <div><dt>Trade-off</dt><dd>The map needs a sentence of explanation the first time. It is the strongest piece to show a recruiter.</dd></div>
+      </dl>
+      <a class="open" href="kaamos.html">Open Kaamos</a>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d3">
+    <a class="shot" href="aamu.html" aria-label="Open the Aamu frame"><img src="shots/aamu.png" alt="Aamu: a morning report headed Last night in New York, with the portfolio value set large and the day's movers" width="1440" height="1000"></a>
+    <div class="text">
+      <h2 id="d3">Aamu</h2>
+      <p class="fi">Finnish for morning</p>
+      <p>A printed-style morning report for someone who wakes up in Helsinki after New York has closed. The euro value is set large, one sentence says how you did against SPY, and twelve small charts share one scale.</p>
+      <dl>
+        <div><dt>Best at</dt><dd>A two-minute read with coffee. Currency effect shown separately.</dd></div>
+        <div><dt>Trade-off</dt><dd>It reads top to bottom, so it is slower to operate than a desk.</dd></div>
+      </dl>
+      <a class="open" href="aamu.html">Open Aamu</a>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d4">
+    <a class="shot" href="impact.html" aria-label="Open the Impact frame"><img src="shots/impact.png" alt="Impact: an example portfolio with money and risk shares per holding, and a panel to try adding or selling a stock" width="1440" height="1000"></a>
+    <div class="text">
+      <h2 id="d4">Impact</h2>
+      <p class="fi">an example portfolio, in the Huurre style</p>
+      <p>What the metrics say about a portfolio, and what changes if you add a stock or sell a holding. Each holding shows its share of the money next to its share of the risk. Pick a stock and an amount to see volatility, beta, worst fall and concentration before and after.</p>
+      <dl>
+        <div><dt>Best at</dt><dd>Deciding what a new buy does to the whole portfolio, not just whether the stock looks good.</dd></div>
+        <div><dt>Reads as</dt><dd>The past year replayed with today’s weights. It describes the past, not a forecast.</dd></div>
+      </dl>
+      <a class="open" href="impact.html">Open Impact</a>
+    </div>
+  </section>
+
+  <section class="shared" aria-labelledby="sh">
+    <div><h2 id="sh">Shared by all three</h2></div>
+    <ul>
+      <li>Times in Helsinki: the US close falls at 23:00 and New York opens at 16:30.</li>
+      <li>The portfolio is valued in euros, and the currency effect is shown apart from the stock returns.</li>
+      <li>Return, volatility, beta and worst fall are computed from daily closes. Valuation fields come from Yahoo.</li>
+      <li>The compare panel rebases each stock to 100 one year ago, against SPY.</li>
+      <li>The selected stock and the compare set live in the page link, so a view can be bookmarked.</li>
+    </ul>
+  </section>
+
+  <section class="next" aria-labelledby="nx">
+    <h2 id="nx">Next step</h2>
+    <p>Pick one direction, or a mix, such as the Huurre desk with the Kaamos map as a second tab. Then I will plan the build: a Python engine that fetches from Yahoo, a web front end, the owner's holdings kept in a private local file, and a new repository on your GitHub.</p>
+    <p class="muted">A design mockup. Not investment advice.</p>
+  </section>
+</div>

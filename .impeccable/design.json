@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-25T00:00:00Z",
+  "title": "Design System: Nordic Desk",
+  "extensions": {
+    "colorMeta": {
+      "paper": {"role": "neutral", "displayName": "Frost Paper", "canonical": "oklch(98.5% 0.004 240)", "tonalRamp": ["oklch(15% 0.008 240)", "oklch(27% 0.01 240)", "oklch(39% 0.012 240)", "oklch(51% 0.012 240)", "oklch(63% 0.01 240)", "oklch(75% 0.009 240)", "oklch(87% 0.007 240)", "oklch(98.5% 0.004 240)"]},
+      "ink": {"role": "neutral", "displayName": "Ink", "canonical": "oklch(21% 0.012 250)", "tonalRamp": ["oklch(15% 0.01 250)", "oklch(21% 0.012 250)", "oklch(36% 0.012 250)", "oklch(50% 0.014 250)", "oklch(65% 0.012 250)", "oklch(80% 0.01 240)", "oklch(90% 0.008 240)", "oklch(96.5% 0.006 240)"]},
+      "accent": {"role": "primary", "displayName": "Steel Hoarfrost Blue", "canonical": "oklch(46% 0.13 250)", "tonalRamp": ["oklch(18% 0.06 250)", "oklch(28% 0.09 250)", "oklch(38% 0.12 250)", "oklch(46% 0.13 250)", "oklch(58% 0.12 250)", "oklch(70% 0.09 250)", "oklch(84% 0.05 250)", "oklch(94.5% 0.025 250)"]},
+      "own": {"role": "secondary", "displayName": "Amber Holding", "canonical": "oklch(52% 0.13 70)", "tonalRamp": ["oklch(18% 0.05 70)", "oklch(28% 0.08 70)", "oklch(40% 0.11 70)", "oklch(52% 0.13 70)", "oklch(64% 0.12 70)", "oklch(75% 0.09 70)", "oklch(86% 0.05 70)", "oklch(95% 0.02 70)"]},
+      "up": {"role": "tertiary", "displayName": "Pine Up", "canonical": "oklch(50% 0.12 165)", "tonalRamp": ["oklch(18% 0.04 165)", "oklch(28% 0.07 165)", "oklch(40% 0.1 165)", "oklch(50% 0.12 165)", "oklch(62% 0.11 165)", "oklch(74% 0.08 165)", "oklch(86% 0.05 165)", "oklch(95% 0.02 165)"]},
+      "down": {"role": "tertiary", "displayName": "Brick Down", "canonical": "oklch(52% 0.17 25)", "tonalRamp": ["oklch(18% 0.06 25)", "oklch(28% 0.1 25)", "oklch(40% 0.14 25)", "oklch(52% 0.17 25)", "oklch(64% 0.14 25)", "oklch(75% 0.1 25)", "oklch(86% 0.05 25)", "oklch(95% 0.02 25)"]},
+      "aamu-accent": {"role": "primary", "displayName": "Finnish Blue (Aamu)", "canonical": "oklch(42% 0.19 262)", "tonalRamp": ["oklch(18% 0.08 262)", "oklch(27% 0.1 262)", "oklch(34% 0.16 262)", "oklch(42% 0.19 262)", "oklch(58% 0.15 262)", "oklch(72% 0.1 262)", "oklch(84% 0.05 262)", "oklch(93% 0.03 262)"]}
+    },
+    "typographyMeta": {
+      "display": {"displayName": "Display", "purpose": "The one headline figure or name on a page."},
+      "headline": {"displayName": "Headline", "purpose": "A verdict word or a section's lead figure."},
+      "title": {"displayName": "Title", "purpose": "Section headings."},
+      "body": {"displayName": "Body", "purpose": "Short explanations, about 70 characters a line."},
+      "label": {"displayName": "Label", "purpose": "Table headers, captions, sources, chips; muted."},
+      "number": {"displayName": "Number", "purpose": "Every figure a reader might compare; tabular mono."},
+      "aamu-display": {"displayName": "Aamu display", "purpose": "Phone glance headlines in the Aamu look."},
+      "aamu-body": {"displayName": "Aamu body", "purpose": "Body and numbers in the Aamu look."}
+    },
+    "shadows": [
+      {"name": "float", "value": "0 6px 24px color-mix(in oklab, var(--color-ink) 14%, transparent)", "purpose": "Hover explanations and popovers."},
+      {"name": "float-tight", "value": "0 8px 24px -8px color-mix(in oklab, var(--color-ink) 25%, transparent)", "purpose": "Small fixed tooltips over tables."},
+      {"name": "sticky", "value": "0 1px 2px color-mix(in oklab, var(--color-ink) 6%, transparent), 0 8px 24px -12px color-mix(in oklab, var(--color-ink) 18%, transparent)", "purpose": "A bar that sticks while content scrolls under it."}
+    ],
+    "motion": [
+      {"name": "dur-micro", "value": "120ms", "purpose": "Hover and pressed state changes."},
+      {"name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default easing for state transitions."}
+    ],
+    "breakpoints": [
+      {"name": "narrow", "value": "60rem"}
+    ]
+  },
+  "components": [
+    {
+      "name": "Nav link", "kind": "nav", "refersTo": "nav-link",
+      "description": "Top bar page links; current page on paper-3.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Desk</a><a href=\"#\">Impact</a><a href=\"#\">Compare</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 4px; font-family: 'Host Grotesk', ui-sans-serif, sans-serif; } .ds-nav a { padding: 4px 12px; border-radius: 6px; text-decoration: none; color: oklch(36% 0.012 250); min-height: 36px; display: inline-flex; align-items: center; transition: background-color 120ms cubic-bezier(0.16,1,0.3,1); } .ds-nav a:hover, .ds-nav a[aria-current] { background: oklch(92.5% 0.009 240); color: oklch(21% 0.012 250); } .ds-nav a:focus-visible { outline: 2px solid oklch(55% 0.16 250); outline-offset: 2px; }"
+    },
+    {
+      "name": "Chip", "kind": "chip", "refersTo": "chip",
+      "description": "Filter or option toggle; selected on paper-3.",
+      "html": "<button class=\"ds-chip\" aria-pressed=\"true\">Held</button> <button class=\"ds-chip\" aria-pressed=\"false\">Watchlist</button>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid oklch(80% 0.01 240); border-radius: 6px; background: oklch(98.5% 0.004 240); color: oklch(21% 0.012 250); font: 0.875rem 'Host Grotesk', ui-sans-serif, sans-serif; cursor: pointer; transition: border-color 120ms, background-color 120ms; } .ds-chip:hover { border-color: oklch(50% 0.014 250); } .ds-chip[aria-pressed='true'] { background: oklch(92.5% 0.009 240); border-color: oklch(36% 0.012 250); } .ds-chip:focus-visible { outline: 2px solid oklch(55% 0.16 250); outline-offset: 2px; } .ds-chip:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Segmented control", "kind": "button", "refersTo": "segment",
+      "description": "Horizon, period and mode switches; pressed in accent.",
+      "html": "<div class=\"ds-seg\"><button aria-pressed=\"true\">6–12 m</button><button aria-pressed=\"false\">Long haul</button></div>",
+      "css": ".ds-seg { display: inline-flex; border: 1px solid oklch(80% 0.01 240); border-radius: 6px; overflow: hidden; } .ds-seg button { border: 0; background: oklch(98.5% 0.004 240); color: oklch(21% 0.012 250); padding: 0 12px; min-height: 36px; font: 0.875rem 'Host Grotesk', ui-sans-serif, sans-serif; cursor: pointer; } .ds-seg button + button { border-inline-start: 1px solid oklch(80% 0.01 240); } .ds-seg button[aria-pressed='true'] { background: oklch(46% 0.13 250); color: oklch(98.5% 0.004 240); } .ds-seg button[aria-pressed='false']:hover { background: oklch(96.5% 0.006 240); } .ds-seg button:focus-visible { outline: 2px solid oklch(55% 0.16 250); outline-offset: -4px; }"
+    },
+    {
+      "name": "Search input", "kind": "input", "refersTo": "search-input",
+      "description": "Ticker or company search on the Ideas page.",
+      "html": "<input class=\"ds-search\" type=\"search\" placeholder=\"Ticker or company\">",
+      "css": ".ds-search { min-height: 40px; padding: 0 12px; border: 1px solid oklch(80% 0.01 240); border-radius: 6px; background: oklch(98.5% 0.004 240); color: oklch(21% 0.012 250); font: 1rem 'Host Grotesk', ui-sans-serif, sans-serif; } .ds-search:hover { border-color: oklch(50% 0.014 250); } .ds-search:focus-visible { outline: 2px solid oklch(55% 0.16 250); outline-offset: -2px; }"
+    },
+    {
+      "name": "Verdict box", "kind": "card", "refersTo": "verdict",
+      "description": "Rules-based verdict with reasons and a source line.",
+      "html": "<div class=\"ds-verdict\"><p class=\"ds-l\">Verdict, 6–12 months</p><p class=\"ds-big\">Hold</p><ul><li><span class=\"ds-up\">+</span>Trend above 200-day line<b>+4.2%</b></li><li><span class=\"ds-down\">−</span>Momentum fading<b>−1.1</b></li></ul><p class=\"ds-fine\">Fixed rules, invented example. Not investment advice.</p></div>",
+      "css": ".ds-verdict { border: 1px solid oklch(80% 0.01 240); border-radius: 8px; padding: 12px 16px; background: oklch(98.5% 0.004 240); color: oklch(21% 0.012 250); font-family: 'Host Grotesk', ui-sans-serif, sans-serif; max-width: 320px; } .ds-l { margin: 0; font-size: 0.875rem; color: oklch(50% 0.014 250); } .ds-big { margin: 4px 0; font-size: 1.728rem; font-weight: 500; letter-spacing: -0.02em; } .ds-verdict ul { list-style: none; margin: 8px 0 0; padding: 0; font-size: 0.875rem; display: grid; gap: 2px; } .ds-verdict li { display: grid; grid-template-columns: 14px 1fr auto; gap: 8px; } .ds-verdict b { font-family: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-weight: 400; } .ds-up { color: oklch(50% 0.12 165); } .ds-down { color: oklch(52% 0.17 25); } .ds-fine { margin: 8px 0 0; font-size: 0.75rem; color: oklch(50% 0.014 250); }"
+    },
+    {
+      "name": "Explainable box", "kind": "custom", "refersTo": "card",
+      "description": "Metric box; border turns accent on hover or focus and an explanation floats in.",
+      "html": "<div class=\"ds-box\" tabindex=\"0\"><p class=\"ds-l\">Volatility, 1 year</p><p class=\"ds-v\">28.4%</p><p class=\"ds-t\">Higher than the benchmark (invented).</p></div>",
+      "css": ".ds-box { border: 1px solid oklch(90% 0.008 240); border-radius: 8px; padding: 12px 16px; background: oklch(98.5% 0.004 240); color: oklch(21% 0.012 250); font-family: 'Host Grotesk', ui-sans-serif, sans-serif; cursor: help; max-width: 220px; transition: border-color 120ms cubic-bezier(0.16,1,0.3,1); } .ds-box:hover, .ds-box:focus-visible { border-color: oklch(46% 0.13 250); outline: none; } .ds-l { margin: 0; font-size: 0.875rem; color: oklch(50% 0.014 250); } .ds-v { margin: 4px 0 2px; font: 1.2rem 'Atkinson Hyperlegible Mono', ui-monospace, monospace; } .ds-t { margin: 0; font-size: 0.875rem; color: oklch(36% 0.012 250); }"
+    },
+    {
+      "name": "Ledger row", "kind": "custom", "refersTo": "card",
+      "description": "Watchlist table row with mono numbers, sparkline and 52-week range.",
+      "html": "<table class=\"ds-tbl\"><thead><tr><th>Ticker</th><th class=\"r\">Today</th><th>3 months</th><th>52 weeks</th></tr></thead><tbody><tr><th class=\"tk\">EXMP</th><td class=\"r up\">+1.4%</td><td><svg width=\"96\" height=\"32\" viewBox=\"0 0 96 32\"><path d=\"M1,26 L20,22 L40,24 L60,14 L80,12 L95,6\" fill=\"none\" stroke=\"oklch(50% 0.12 165)\" stroke-width=\"1.5\"/></svg></td><td><span class=\"ds-rng\"><i style=\"left:72%\"></i></span></td></tr></tbody></table>",
+      "css": ".ds-tbl { border-collapse: collapse; font-family: 'Host Grotesk', ui-sans-serif, sans-serif; color: oklch(21% 0.012 250); } .ds-tbl th, .ds-tbl td { padding: 8px 12px; border-bottom: 1px solid oklch(90% 0.008 240); text-align: start; white-space: nowrap; vertical-align: middle; } .ds-tbl thead th { font-weight: 500; font-size: 0.875rem; color: oklch(50% 0.014 250); } .ds-tbl .r { text-align: end; } .ds-tbl .tk, .ds-tbl td.r { font-family: 'Atkinson Hyperlegible Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; } .ds-tbl .tk { font-weight: 600; } .ds-tbl .up { color: oklch(50% 0.12 165); } .ds-tbl tbody tr:hover { background: oklch(96.5% 0.006 240); } .ds-rng { position: relative; display: block; width: 88px; height: 14px; } .ds-rng::before { content: ''; position: absolute; inset: 6px 0 auto; height: 2px; background: oklch(80% 0.01 240); } .ds-rng i { position: absolute; top: 1px; width: 3px; height: 12px; background: oklch(21% 0.012 250); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Hoarfrost Ledger",
+    "overview": "Nordic Desk reads like a clean ledger on a frosty morning: cool, nearly white paper, hairline rules, and columns of tabular numbers that line up to the digit. The system is quiet on purpose. The owner comes here to make a calm long-term call, and the pages should feel like a research desk that has already done the arithmetic, not a trading screen asking for action.\n\nDensity is high but never cramped. Tables, small multiples and sparklines carry most of the information; prose is short and sits beside the number it explains. Colour is almost absent at rest. It appears only to carry meaning: up, down, the owner's own position, the selected series, and focus. Depth comes from paper tints and hairlines, never from resting shadows.\n\nThere are two looks over one engine. Huurre (hoarfrost) is the main system for desktop research: Host Grotesk with a mono for numbers, an 8 px card radius, a muted steel-blue accent. Aamu (morning) is a sibling colourway for the phone glance after the US close: Barlow Condensed headlines, square corners, a saturated Finnish blue. Both share the spacing, type scale and number formats.",
+    "keyCharacteristics": [
+      "Cool paper in three tints, ink in three weights, two hairline greys.",
+      "Every figure in a tabular mono; proper minus sign; euros with thin-space thousands.",
+      "Colour means something or it is not there.",
+      "Flat at rest; a soft shadow only on layers that float above the page.",
+      "Sentence-case labels, no tracked capitals."
+    ],
+    "rules": [
+      {"name": "The Meaning-Only Rule", "body": "Colour at rest is reserved for up, down, own, series and focus. If a coloured element carries no meaning, it is grey.", "section": "colors"},
+      {"name": "The Never-Alone Rule", "body": "Up and down colours always come with a sign (+, −) or a word. A colour-blind reader loses nothing.", "section": "colors"},
+      {"name": "The Mono-for-Money Rule", "body": "Any figure a reader might compare goes in the number face with tabular figures. Words never use the mono.", "section": "typography"},
+      {"name": "The Sentence-Case Rule", "body": "Labels and headings are sentence case. No all-caps, no letter-spaced eyebrows.", "section": "typography"},
+      {"name": "The Flat-at-Rest Rule", "body": "Cards, boxes, verdicts and tables never carry a resting shadow. If something needs to stand out, give it a stronger hairline (rule-2) or a paper tint.", "section": "elevation"}
+    ],
+    "dos": [
+      "Do take every colour, face, radius and space from the tokens in `views/core.py`; no literal values in page CSS.",
+      "Do put every number in the mono face with tabular figures, a proper minus sign (−) and thin-space thousands.",
+      "Do pair up/down colour with a sign or a word.",
+      "Do show where the numbers come from and \"Not investment advice.\" on every page.",
+      "Do check every page at 1280 px and 390 px.",
+      "Do use `sel` for a selected row and `paper-3` for hover, so selection and hover never look the same."
+    ],
+    "donts": [
+      "Don't put a resting shadow on a card, box or table.",
+      "Don't use colour for decoration, gradients, or a second accent in Huurre.",
+      "Don't use all-caps or letter-spaced labels.",
+      "Don't mix the Aamu tokens into Huurre pages, or the reverse.",
+      "Don't write promise wording (\"will return\") or call-to-trade buttons."
+    ]
+  }
+}
